@@ -1,0 +1,358 @@
+{
+  "name": "Zammad - Assign organizations to existing users using \"domain based assignment\"",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "d62c20b0-332a-4c7d-96cb-c19fe03bf151",
+      "name": "When clicking ‘Test workflow’",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        40,
+        -80
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "772457dc-73a3-4b4e-b51c-27e3ae49b393",
+              "leftValue": "={{ $json.domain_assignment }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "52d2e881-7825-47b0-8a03-e643ca90f2cb",
+              "leftValue": "={{ $json.domain }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "e932a847-3f96-4280-8fd2-7cbc45105b42",
+              "leftValue": "={{ $json.shared }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "1d2ea76a-3510-4bea-89e6-de68ae37c787",
+              "leftValue": "={{ $json.active }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "5f9456be-3ba7-43c4-bfdb-77175be84b6a",
+              "leftValue": "={{ $json.domain }}",
+              "rightValue": "={{ $json.domain }}",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "9c23b715-1e88-4b3a-9146-377c9e0fc980",
+      "name": "Organization has domain and is shared",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        560,
+        260
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "8ceb54ef-61b0-40ed-814b-8918e34154fb",
+              "leftValue": "={{ $json.organization_id == null }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "7c0d4c59-baee-4080-9423-dfd1a9f29d82",
+              "leftValue": "={{ $json.active }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "4a45536c-5646-4e88-8498-36ad9a42efd1",
+              "leftValue": "={{ $json.email }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "e0f5947a-9636-45c8-a73e-83adc9f66046",
+              "leftValue": "={{ $json.email }}",
+              "rightValue": "@",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "df8c21e9-81ca-4d92-a0ab-195a3372f027",
+      "name": "User has email and no organization",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        560,
+        -80
+      ]
+    },
+    {
+      "parameters": {
+        "keepOnlySet": true,
+        "values": {
+          "number": [
+            {
+              "name": "user_id",
+              "value": "={{ $json.id }}"
+            }
+          ],
+          "string": [
+            {
+              "name": "domain",
+              "value": "={{ $json.email.split('@')[1] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "6f5b5cee-db76-414c-a3d6-b17f42e74a50",
+      "name": "Extract Domain from User E-Mail",
+      "type": "n8n-nodes-base.set",
+      "position": [
+        860,
+        -100
+      ],
+      "typeVersion": 1,
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "returnAll": true,
+        "filters": {}
+      },
+      "id": "f40e2f91-5d31-4530-98dd-9f9973549e19",
+      "name": "Zammad",
+      "type": "n8n-nodes-base.zammad",
+      "typeVersion": 1,
+      "position": [
+        320,
+        -80
+      ],
+      "credentials": {
+        "zammadTokenAuthApi": {
+          "id": "fj5GuzcJuNLQeMxz",
+          "name": "Zammad Token Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "organization",
+        "operation": "getAll",
+        "returnAll": true
+      },
+      "id": "c336af66-f837-4ebe-9cd2-ef00dd6a3cbd",
+      "name": "Zammad1",
+      "type": "n8n-nodes-base.zammad",
+      "typeVersion": 1,
+      "position": [
+        340,
+        260
+      ],
+      "credentials": {
+        "zammadTokenAuthApi": {
+          "id": "fj5GuzcJuNLQeMxz",
+          "name": "Zammad Token Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "fieldsToMatchString": "domain",
+        "options": {}
+      },
+      "id": "e9389dd2-069b-48b8-8f6b-090236de67f9",
+      "name": "Merge",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        1440,
+        80
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": "={{ $json.user_id }}",
+        "updateFields": {
+          "organization": "={{ $json.id }}"
+        }
+      },
+      "id": "8bd3ae8a-401a-4f8b-8e46-16943b817969",
+      "name": "Update User",
+      "type": "n8n-nodes-base.zammad",
+      "typeVersion": 1,
+      "position": [
+        1720,
+        80
+      ],
+      "credentials": {
+        "zammadTokenAuthApi": {
+          "id": "fj5GuzcJuNLQeMxz",
+          "name": "Zammad Token Auth account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When clicking ‘Test workflow’": {
+      "main": [
+        [
+          {
+            "node": "Zammad",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Zammad1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "User has email and no organization": {
+      "main": [
+        [
+          {
+            "node": "Extract Domain from User E-Mail",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Organization has domain and is shared": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Extract Domain from User E-Mail": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Zammad": {
+      "main": [
+        [
+          {
+            "node": "User has email and no organization",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Zammad1": {
+      "main": [
+        [
+          {
+            "node": "Organization has domain and is shared",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Update User",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "fd798b21-6fb5-456f-af04-a3701ae0a528",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "494d0146a0f47676ad70a44a32086b466621f62da855e3eaf0ee51dee1f76753"
+  },
+  "id": "QXhjTKmtXQyDDsAf",
+  "tags": []
+}
