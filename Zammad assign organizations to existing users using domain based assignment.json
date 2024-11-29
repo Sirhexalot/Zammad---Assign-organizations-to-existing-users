@@ -172,7 +172,7 @@
       "name": "Extract Domain from User E-Mail",
       "type": "n8n-nodes-base.set",
       "position": [
-        860,
+        960,
         -100
       ],
       "typeVersion": 1,
@@ -231,8 +231,8 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3,
       "position": [
-        1440,
-        80
+        1280,
+        220
       ]
     },
     {
@@ -248,8 +248,8 @@
       "type": "n8n-nodes-base.zammad",
       "typeVersion": 1,
       "position": [
-        1720,
-        80
+        1540,
+        220
       ],
       "credentials": {
         "zammadTokenAuthApi": {
@@ -348,7 +348,7 @@
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "fd798b21-6fb5-456f-af04-a3701ae0a528",
+  "versionId": "41932b8d-036f-471d-b8d4-9567cf105e63",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "494d0146a0f47676ad70a44a32086b466621f62da855e3eaf0ee51dee1f76753"
