@@ -1,15 +1,70 @@
 {
-  "name": "Zammad - Assign organizations to existing users using \"domain based assignment\"",
+  "name": "Entra User to Zammad User Sync",
   "nodes": [
     {
       "parameters": {},
-      "id": "d62c20b0-332a-4c7d-96cb-c19fe03bf151",
+      "id": "0007443e-b0d4-4f98-a613-3ec7c2842aa3",
       "name": "When clicking ‘Test workflow’",
       "type": "n8n-nodes-base.manualTrigger",
       "typeVersion": 1,
       "position": [
-        40,
-        -80
+        -1680,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "content": "## Select Entra Users in a named Entra Group that should be synced to Zammad\n\n\n\n",
+        "height": 329.7269624573379,
+        "width": 1635.910561370123
+      },
+      "id": "2b285a4f-7e39-411b-88b9-cb55c5cf62e3",
+      "name": "Note1",
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1700,
+        380
+      ],
+      "typeVersion": 1
+    },
+    {
+      "parameters": {
+        "url": "https://graph.microsoft.com/v1.0/groups",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "microsoftOAuth2Api",
+        "options": {}
+      },
+      "id": "929e529e-a4a3-4663-b9dc-e2300a860fed",
+      "name": "Get Groups from Entra",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1620,
+        480
+      ],
+      "credentials": {
+        "microsoftGraphSecurityOAuth2Api": {
+          "id": "b09tqOxzkl0P8UQD",
+          "name": "ms365test.zammad.org"
+        },
+        "microsoftOAuth2Api": {
+          "id": "U2E5p3lreqSi8v1N",
+          "name": "ms365test.zammad.org"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "value",
+        "options": {}
+      },
+      "id": "3390b2ed-6070-429c-bc1a-f0ab324117c7",
+      "name": "Remove outer Array",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -1400,
+        480
       ]
     },
     {
@@ -23,49 +78,9 @@
           },
           "conditions": [
             {
-              "id": "772457dc-73a3-4b4e-b51c-27e3ae49b393",
-              "leftValue": "={{ $json.domain_assignment }}",
-              "rightValue": "",
-              "operator": {
-                "type": "boolean",
-                "operation": "true",
-                "singleValue": true
-              }
-            },
-            {
-              "id": "52d2e881-7825-47b0-8a03-e643ca90f2cb",
-              "leftValue": "={{ $json.domain }}",
-              "rightValue": "",
-              "operator": {
-                "type": "string",
-                "operation": "notEmpty",
-                "singleValue": true
-              }
-            },
-            {
-              "id": "e932a847-3f96-4280-8fd2-7cbc45105b42",
-              "leftValue": "={{ $json.shared }}",
-              "rightValue": "",
-              "operator": {
-                "type": "boolean",
-                "operation": "true",
-                "singleValue": true
-              }
-            },
-            {
-              "id": "1d2ea76a-3510-4bea-89e6-de68ae37c787",
-              "leftValue": "={{ $json.active }}",
-              "rightValue": "",
-              "operator": {
-                "type": "boolean",
-                "operation": "true",
-                "singleValue": true
-              }
-            },
-            {
-              "id": "5f9456be-3ba7-43c4-bfdb-77175be84b6a",
-              "leftValue": "={{ $json.domain }}",
-              "rightValue": "={{ $json.domain }}",
+              "id": "2dbb2484-2424-4095-a5a2-76ab4e3aaae8",
+              "leftValue": "={{ $json.displayName }}",
+              "rightValue": "ENTRA",
               "operator": {
                 "type": "string",
                 "operation": "equals",
@@ -77,76 +92,29 @@
         },
         "options": {}
       },
-      "id": "9c23b715-1e88-4b3a-9146-377c9e0fc980",
-      "name": "Organization has domain and is shared",
+      "id": "b0e9531a-7fc0-4de0-8ec5-4be476b18a26",
+      "name": "Select Entra Zammad default Group",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [
-        560,
-        260
-      ]
+        -1140,
+        480
+      ],
+      "notesInFlow": true,
+      "notes": "Please enter the Entra group name of users to be synchronized."
     },
     {
       "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "strict",
-            "version": 2
-          },
-          "conditions": [
-            {
-              "id": "8ceb54ef-61b0-40ed-814b-8918e34154fb",
-              "leftValue": "={{ $json.organization_id == null }}",
-              "rightValue": "",
-              "operator": {
-                "type": "boolean",
-                "operation": "true",
-                "singleValue": true
-              }
-            },
-            {
-              "id": "7c0d4c59-baee-4080-9423-dfd1a9f29d82",
-              "leftValue": "={{ $json.active }}",
-              "rightValue": "",
-              "operator": {
-                "type": "boolean",
-                "operation": "true",
-                "singleValue": true
-              }
-            },
-            {
-              "id": "4a45536c-5646-4e88-8498-36ad9a42efd1",
-              "leftValue": "={{ $json.email }}",
-              "rightValue": "",
-              "operator": {
-                "type": "string",
-                "operation": "notEmpty",
-                "singleValue": true
-              }
-            },
-            {
-              "id": "e0f5947a-9636-45c8-a73e-83adc9f66046",
-              "leftValue": "={{ $json.email }}",
-              "rightValue": "@",
-              "operator": {
-                "type": "string",
-                "operation": "contains"
-              }
-            }
-          ],
-          "combinator": "and"
-        },
+        "fieldToSplitOut": "value",
         "options": {}
       },
-      "id": "df8c21e9-81ca-4d92-a0ab-195a3372f027",
-      "name": "User has email and no organization",
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2.2,
+      "id": "1be2a745-aea3-46ec-ab84-be2e39358b95",
+      "name": "Remove outer Array from Entra User",
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
       "position": [
-        560,
-        -80
+        -580,
+        480
       ]
     },
     {
@@ -155,28 +123,43 @@
         "values": {
           "number": [
             {
-              "name": "user_id",
+              "name": "entraid",
               "value": "={{ $json.id }}"
             }
           ],
           "string": [
             {
-              "name": "domain",
-              "value": "={{ $json.email.split('@')[1] }}"
+              "name": "email",
+              "value": "={{ $json.userPrincipalName }}"
+            },
+            {
+              "name": "firstname",
+              "value": "={{ $json.surname }}"
+            },
+            {
+              "name": "lastname",
+              "value": "={{ $json.givenName }}"
+            },
+            {
+              "name": "mobile",
+              "value": "={{ $json.mobilePhone }}"
+            },
+            {
+              "name": "phone",
+              "value": "={{ $json.businessPhones[0] }}"
             }
           ]
         },
         "options": {}
       },
-      "id": "6f5b5cee-db76-414c-a3d6-b17f42e74a50",
-      "name": "Extract Domain from User E-Mail",
+      "id": "3b1fc962-7546-4bad-b637-e018649a0652",
+      "name": "Zammad Univeral User Object",
       "type": "n8n-nodes-base.set",
       "position": [
-        960,
-        -100
+        -320,
+        480
       ],
-      "typeVersion": 1,
-      "alwaysOutputData": true
+      "typeVersion": 1
     },
     {
       "parameters": {
@@ -184,34 +167,13 @@
         "returnAll": true,
         "filters": {}
       },
-      "id": "f40e2f91-5d31-4530-98dd-9f9973549e19",
-      "name": "Zammad",
+      "id": "9e36e6a9-cf56-4548-a1af-b1e33dbc61dd",
+      "name": "Get Zammad Users",
       "type": "n8n-nodes-base.zammad",
       "typeVersion": 1,
       "position": [
-        320,
-        -80
-      ],
-      "credentials": {
-        "zammadTokenAuthApi": {
-          "id": "fj5GuzcJuNLQeMxz",
-          "name": "Zammad Token Auth account"
-        }
-      }
-    },
-    {
-      "parameters": {
-        "resource": "organization",
-        "operation": "getAll",
-        "returnAll": true
-      },
-      "id": "c336af66-f837-4ebe-9cd2-ef00dd6a3cbd",
-      "name": "Zammad1",
-      "type": "n8n-nodes-base.zammad",
-      "typeVersion": 1,
-      "position": [
-        340,
-        260
+        -320,
+        160
       ],
       "credentials": {
         "zammadTokenAuthApi": {
@@ -223,33 +185,91 @@
     {
       "parameters": {
         "mode": "combine",
-        "fieldsToMatchString": "domain",
+        "fieldsToMatchString": "email",
         "options": {}
       },
-      "id": "e9389dd2-069b-48b8-8f6b-090236de67f9",
+      "id": "c9a342b1-b5f2-4d31-9737-15f145dc7318",
       "name": "Merge",
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3,
       "position": [
-        1280,
-        220
+        200,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://graph.microsoft.com/v1.0/groups/{{ $json.id }}/members ",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "microsoftOAuth2Api",
+        "options": {}
+      },
+      "id": "a04ebfea-e5fe-4903-841a-8ef29d75ff1a",
+      "name": "Get Members of the default group",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -840,
+        480
+      ],
+      "credentials": {
+        "microsoftGraphSecurityOAuth2Api": {
+          "id": "b09tqOxzkl0P8UQD",
+          "name": "ms365test.zammad.org"
+        },
+        "microsoftOAuth2Api": {
+          "id": "U2E5p3lreqSi8v1N",
+          "name": "ms365test.zammad.org"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mergeByFields": {
+          "values": [
+            {
+              "field1": "email",
+              "field2": "email"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "2e68992e-3080-41fd-9aae-c44dc60dc3b0",
+      "name": "Find new Zammad Users",
+      "type": "n8n-nodes-base.compareDatasets",
+      "typeVersion": 2.3,
+      "position": [
+        200,
+        460
       ]
     },
     {
       "parameters": {
         "operation": "update",
-        "id": "={{ $json.user_id }}",
+        "id": "={{ $json.id }}",
         "updateFields": {
-          "organization": "={{ $json.id }}"
+          "customFieldsUi": {
+            "customFieldPairs": [
+              {
+                "name": "entraid",
+                "value": "={{ $json.entraid }}"
+              }
+            ]
+          },
+          "firstname": "={{ $json.lastname }}",
+          "lastname": "={{ $json.firstname }}",
+          "phone": "={{ $json.phone }}",
+          "mobile": "={{ $json.mobile }}"
         }
       },
-      "id": "8bd3ae8a-401a-4f8b-8e46-16943b817969",
-      "name": "Update User",
+      "id": "86dc2c72-d54a-40a9-a64b-fc0bde9a2387",
+      "name": "Update Zammad User",
       "type": "n8n-nodes-base.zammad",
       "typeVersion": 1,
       "position": [
-        1540,
-        220
+        560,
+        180
       ],
       "credentials": {
         "zammadTokenAuthApi": {
@@ -257,6 +277,96 @@
           "name": "Zammad Token Auth account"
         }
       }
+    },
+    {
+      "parameters": {
+        "firstname": "={{ $json.lastname }}",
+        "lastname": "={{ $json.firstname }}",
+        "additionalFields": {
+          "customFieldsUi": {
+            "customFieldPairs": [
+              {
+                "name": "entraid",
+                "value": "={{ $json.entraid }}"
+              }
+            ]
+          },
+          "email": "={{ $json.email }}",
+          "phone": "={{ $json.phone }}",
+          "mobile": "={{ $json.mobile }}"
+        }
+      },
+      "id": "bc883c6d-ec53-4854-824a-bd76b28077d2",
+      "name": "Create Zammad User",
+      "type": "n8n-nodes-base.zammad",
+      "typeVersion": 1,
+      "position": [
+        560,
+        500
+      ],
+      "credentials": {
+        "zammadTokenAuthApi": {
+          "id": "fj5GuzcJuNLQeMxz",
+          "name": "Zammad Token Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "id": "={{ $json.id }}",
+        "updateFields": {
+          "active": false,
+          "customFieldsUi": {
+            "customFieldPairs": [
+              {
+                "name": "entraid",
+                "value": "={{ $json.entraid }}"
+              }
+            ]
+          },
+          "firstname": "={{ $json.lastname }}",
+          "lastname": "={{ $json.firstname }}",
+          "phone": "={{ $json.phone }}",
+          "mobile": "={{ $json.mobile }}"
+        }
+      },
+      "id": "3b57e278-e755-407c-b261-7fe76ce82bb5",
+      "name": "Deactivate Zammad User",
+      "type": "n8n-nodes-base.zammad",
+      "typeVersion": 1,
+      "position": [
+        560,
+        880
+      ],
+      "credentials": {
+        "zammadTokenAuthApi": {
+          "id": "fj5GuzcJuNLQeMxz",
+          "name": "Zammad Token Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mergeByFields": {
+          "values": [
+            {
+              "field1": "entraid",
+              "field2": "entraid"
+            }
+          ]
+        },
+        "resolve": "preferInput1",
+        "options": {}
+      },
+      "id": "cdaf8b51-9b4c-4ad0-b8f0-c6921849ed4c",
+      "name": "Find removed Users",
+      "type": "n8n-nodes-base.compareDatasets",
+      "typeVersion": 2.3,
+      "position": [
+        240,
+        880
+      ]
     }
   ],
   "pinData": {},
@@ -265,67 +375,93 @@
       "main": [
         [
           {
-            "node": "Zammad",
-            "type": "main",
-            "index": 0
-          },
-          {
-            "node": "Zammad1",
+            "node": "Get Zammad Users",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "User has email and no organization": {
+    "Get Groups from Entra": {
       "main": [
         [
           {
-            "node": "Extract Domain from User E-Mail",
+            "node": "Remove outer Array",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Organization has domain and is shared": {
+    "Remove outer Array": {
+      "main": [
+        [
+          {
+            "node": "Select Entra Zammad default Group",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Select Entra Zammad default Group": {
+      "main": [
+        [
+          {
+            "node": "Get Members of the default group",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Remove outer Array from Entra User": {
+      "main": [
+        [
+          {
+            "node": "Zammad Univeral User Object",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Zammad Univeral User Object": {
       "main": [
         [
           {
             "node": "Merge",
             "type": "main",
             "index": 1
+          },
+          {
+            "node": "Find new Zammad Users",
+            "type": "main",
+            "index": 1
+          },
+          {
+            "node": "Find removed Users",
+            "type": "main",
+            "index": 1
           }
         ]
       ]
     },
-    "Extract Domain from User E-Mail": {
+    "Get Zammad Users": {
       "main": [
         [
           {
             "node": "Merge",
             "type": "main",
             "index": 0
-          }
-        ]
-      ]
-    },
-    "Zammad": {
-      "main": [
-        [
+          },
           {
-            "node": "User has email and no organization",
+            "node": "Find new Zammad Users",
             "type": "main",
             "index": 0
-          }
-        ]
-      ]
-    },
-    "Zammad1": {
-      "main": [
-        [
+          },
           {
-            "node": "Organization has domain and is shared",
+            "node": "Find removed Users",
             "type": "main",
             "index": 0
           }
@@ -336,7 +472,45 @@
       "main": [
         [
           {
-            "node": "Update User",
+            "node": "Update Zammad User",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Members of the default group": {
+      "main": [
+        [
+          {
+            "node": "Remove outer Array from Entra User",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find new Zammad Users": {
+      "main": [
+        [],
+        [],
+        [],
+        [
+          {
+            "node": "Create Zammad User",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find removed Users": {
+      "main": [
+        [],
+        [],
+        [
+          {
+            "node": "Deactivate Zammad User",
             "type": "main",
             "index": 0
           }
@@ -348,11 +522,11 @@
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "41932b8d-036f-471d-b8d4-9567cf105e63",
+  "versionId": "790fc7c7-53ad-4869-a707-80ea7144cf82",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "494d0146a0f47676ad70a44a32086b466621f62da855e3eaf0ee51dee1f76753"
   },
-  "id": "QXhjTKmtXQyDDsAf",
+  "id": "KKCfXEpBjjhp1LC8",
   "tags": []
 }
